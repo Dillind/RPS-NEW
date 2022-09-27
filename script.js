@@ -20,21 +20,28 @@
 // - Return the winner and the loser at the end.
 
 // Choices to choose from for the game
-const choices = ['rock', 'paper', 'scissors'];
+const choices = ['Rock', 'Paper', 'Scissors'];
 const winners = [];
+let playerScore = 0;
+let computerScore = 0;
 
-function startGame() {
-  for (let i = 1; i <= 5; i++) {
-    playRound(i); // inputs the round number each time until it reaches round 5.
-  }
-  document.querySelector('button').textContent = 'Play new game';
-  logWins();
-}
-// - calls the playRound function
-// - Plays 5 round games and keeps track of the score
-// - returns the winner and loser at the end
+// function startGame() {
+//   for (let i = 1; i <= 5; i++) {
+//     playRound(i); // inputs the round number each time until it reaches round 5.
+//   }
+//   document.querySelector('button').textContent = 'Play new game';
+//   logWins();
+// }
 
-// playRound function that:
+// variables that manipulate the DOM
+const rockButton = document.querySelector('.rock');
+const paperButton = document.querySelector('.paper');
+const scissorsButton = document.querySelector('.scissors');
+const outcomeDiv = document.querySelector('.outcome');
+const playerScoreSpan = document.querySelector('.player-score');
+const computerScoreSpan = document.querySelector('.computer-score');
+// const buttons = document.querySelectorAll('button');
+
 function playRound(round) {
   const playerChoice = playerSelection();
   // console.log(playerChoice);
@@ -43,8 +50,6 @@ function playRound(round) {
   winners.push(winner);
   logRound(playerChoice, computerChoice, winner, round);
 }
-// - has two parameters: playerSelection and computerSelection
-// - return a string that declares the winner of the round.
 
 // This function prompts the user to choose either rock, paper or scissors.
 function playerSelection() {
@@ -79,33 +84,86 @@ function validateInput(choice) {
 
 function checkWinner(choiceP, choiceC) {
   if (choiceP === choiceC) {
-    return 'Tie!';
+    const p = document.createElement('p');
+    p.innerText = `Tie! You both picked ${choiceC && choiceP}.`;
+    outcomeDiv.appendChild(p);
   } else if (
-    (choiceP === 'rock' && choiceC === 'scissors') ||
-    (choiceP === 'paper' && choiceC === 'rock') ||
-    (choiceP === 'scissors' && choiceC === 'paper')
+    (choiceP === 'Rock' && choiceC === 'Scissors') ||
+    (choiceP === 'Paper' && choiceC === 'Rock') ||
+    (choiceP === 'Scissors' && choiceC === 'Paper')
   ) {
-    return 'Player';
+    playerScore++;
+    const p = document.createElement('p');
+    p.innerText = `You win! ${choiceP} beats ${choiceC}.`;
+    outcomeDiv.appendChild(p);
   } else {
-    return 'Computer';
+    computerScore++;
+    const p = document.createElement('p');
+    p.innerText = `You lose! ${choiceC} beats ${choiceP}.`;
+    outcomeDiv.appendChild(p);
   }
 }
+
 // A filter array that looks for "items" related to the desired variable. If the item does not equal the desired result, it throws it away.
-function logWins() {
-  let playerWins = winners.filter(winner => winner == 'Player').length;
-  let computerWins = winners.filter(winner => winner == 'Computer').length;
-  let ties = winners.filter(winner => winner == 'Tie').length;
-  console.log('Results');
-  console.log('Player Wins:', playerWins);
-  console.log('Computer Wins:', computerWins);
-  console.log('Ties:', ties);
-}
+// function logWins() {
+//   let playerWins = winners.filter(winner => winner == 'Player').length;
+//   let computerWins = winners.filter(winner => winner == 'Computer').length;
+//   let ties = winners.filter(winner => winner == 'Tie').length;
+//   console.log('Results');
+//   console.log('Player Wins:', playerWins);
+//   console.log('Computer Wins:', computerWins);
+//   console.log('Ties:', ties);
+// }
 
 // Computes in the console the round number, what the player chose, what the computer chose, and the winner of that round.
-function logRound(playerSelection, computerSelection, winner, round) {
-  console.log(`Round: ${round}`);
-  console.log(`Player chose: ${playerSelection}`);
-  console.log(`Computer chose: ${computerSelection}`);
-  console.log(`The winner of this round is: ${winner}`);
-  console.log('--------------------------------------');
-}
+// function logRound(playerSelection, computerSelection, winner, round) {
+//   // change to DOM
+//   console.log(`Round: ${round}`);
+//   console.log(`Player chose: ${playerSelection}`);
+//   console.log(`Computer chose: ${computerSelection}`);
+//   console.log(`The winner of this round is: ${winner}`);
+//   console.log('--------------------------------------');
+// }
+
+const checkScore = (playerScore, computerScore) => {
+  const h2 = document.createElement('h2');
+  if (playerScore === 5) {
+    h2.classList.add('player-won');
+    h2.innerText = `You Won! ${playerScore} to ${computerScore} - Great job!`;
+    outcomeDiv.append(h2);
+  } else if (computerScore === 5) {
+    h2.classList.add('computer-won');
+    h2.innerText = `You Lost! ${playerScore} to ${computerScore} - Better luck next time!`;
+    outcomeDiv.append(h2);
+  }
+};
+
+const updateScores = (playerScore, computerScore) => {
+  playerScoreSpan.innerText = `Player Score: ${playerScore}             `;
+  computerScoreSpan.innerText = `Computer Score: ${computerScore}                `;
+};
+
+// Event Listeners for each Button
+rockButton.addEventListener('click', () => {
+  const computerChoice = computerSelection();
+  const playerChoice = 'Rock';
+  checkWinner(playerChoice, computerChoice);
+  updateScores(playerScore, computerScore);
+  checkScore(playerScore, computerScore);
+});
+
+paperButton.addEventListener('click', () => {
+  const computerChoice = computerSelection();
+  const playerChoice = 'Paper';
+  checkWinner(playerChoice, computerChoice);
+  updateScores(playerScore, computerScore);
+  checkScore(playerScore, computerScore);
+});
+
+scissorsButton.addEventListener('click', () => {
+  const computerChoice = computerSelection();
+  const playerChoice = 'Scissors';
+  checkWinner(playerChoice, computerChoice);
+  updateScores(playerScore, computerScore);
+  checkScore(playerScore, computerScore);
+});
